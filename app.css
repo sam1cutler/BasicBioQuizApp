@@ -6,3 +6,12 @@
   * https://github.com/andreacardybailey/responsive_example/blob/master/styles/responsive-base.css 
   *
 */
+
+.major-section {
+  border: 2px solid grey;
+  margin: 30px;
+}
+
+form {
+  margin: 20px;
+}

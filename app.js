@@ -1,3 +1,4 @@
+
 /**
  * Example store structure
  */
