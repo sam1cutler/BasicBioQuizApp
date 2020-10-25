@@ -7,6 +7,19 @@
   *
 */
 
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .major-section {
   border: 2px solid grey;
   margin: 30px;
@@ -14,4 +27,19 @@
 
 form {
   margin: 20px;
+}
+
+.questions-container {
+  margin: 20px;
+}
+
+.question-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.question-list > li {
+  margin-bottom: 20px;
+  border: 1px solid grey;
+  padding: 20px;
 }
