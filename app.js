@@ -57,14 +57,33 @@ function quizStartHTML() {
     <div class='major-section'>
       <form action="#">
         <h3>Welcome to this quiz, focused on content from the first chapter of our biology textbook.</h3>
-        <button>Start quiz.</button>
+        <button class='js-quiz-start'>Start quiz.</button>
       </form>
     </div>`;
 }
 
 function quizQuestionHTML() {
   console.log('The quizQuestionHTML function ran.');
-  return `<p>Here is a placeholder of the quiz question HTML</p>`
+  return `
+    <form action="#">
+      <h3 class="js-test-click">Evolution is defined by its action on which level of organization?</h3>
+      
+      <!--
+      <div class="questions-container">
+        <input type="radio" name='evolution' value='mols-genes'>
+         <label for="mols-genes">molecules and genes</label><br>
+        <input type="radio" name='evolution' value='communities'>
+         <label for="communities">communities</label><br>
+        <input type="radio" name='evolution' value='population'>
+         <label for="population">population</label><br>
+        <input type="radio" name='evolution' value='orgs'>
+         <label for="orgs">individual organisms</label><br>
+      </div>
+      -->
+
+      <button class='js-submit-answer-button'>Submit answer.</button>
+    </form>  
+  `
 }
 
 function quizCompleteHTML() {
@@ -87,7 +106,7 @@ function generateFormString() {
     
     // I think need an additional conditional to handle 
     // whether to give a question form or a "quiz results" form
-    if (quizCompleted === false) {
+    if (store.quizCompleted === false) {
       return quizQuestionHTML();
     } else if (quizCompleted === true) {
       return quizCompleteHTML();
@@ -107,7 +126,7 @@ function renderQuizPage() {
   let HTMLformAddition = generateFormString();
 
   // Insert that string/HTML content into the proper place in the DOM
-  $('.js-insert-form-here').html(HTMLformAddition);
+  $('.js-quiz-page').html(HTMLformAddition);
 }
 
 
@@ -119,7 +138,36 @@ function renderQuizPage() {
 // Thinking about "user stories" to sketch out the render functions that I'll need...
 // This page will need to handle...
 
-// ...starting the quiz
+// ...clicks of the "start quiz" button
+function handleStartQuiz() {
+  console.log('Ran handleStartQuiz function.')
+  $('.js-quiz-page',).on('click', '.js-quiz-start', function(event) {
+    event.preventDefault();
+    console.log('You clicked the "start quiz" button');
+
+    // change quiz Start status
+    store.quizStarted = true;
+    console.log('Setting "quizStarted" to "true".')
+    
+    // change question #
+    store.questionNumber = 1;
+    console.log('Setting "questionNumber" to "1".')
+
+    console.log('With those changes in place, re-rendering the DOM.')
+    renderQuizPage();
+
+  });
+}
+
+// ...clicks of the "Submit Answer" button
+function handleAnswerSubmission() {
+  console.log('Ran handleAnswerSubmission function.')
+  $('.js-quiz-page').on('click', '.js-submit-answer-button', function(event) {
+    //event.preventDefault();
+    console.log('You submitted an answer.');
+    //renderQuizPage();
+  });
+}
 
 // ...a correct answer being submitted
 
@@ -128,12 +176,12 @@ function renderQuizPage() {
 // ...re-starting the quiz
 
 
-
 // run (what's the proper word here?) all the otherhandler functions
 function handleQuizPage() {
   console.log('Ran handleQuizPage function.');
   renderQuizPage();
-
+  handleStartQuiz();
+  handleAnswerSubmission();
 }
 
 
