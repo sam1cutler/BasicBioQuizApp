@@ -43,6 +43,7 @@ const store = {
   quizStarted: false,
   quizCompleted: false,
   questionNumber: 0,
+  questionAnswered: false,
   score: 0
 };
 
@@ -64,6 +65,19 @@ const store = {
 /********** TEMPLATE GENERATION FUNCTIONS **********/
 
 // These functions return HTML templates
+
+function summaryHTMLaddition() {
+  console.log('Ran summaryHTMLaddition function.');
+  
+  // if quiz hasn't started OR if it's done, should be empty
+  if (store.quizStarted === false || store.quizCompleted === true) {
+    return 'Placeholder summary info but will be empty in this situation.';
+  } else {
+    return `
+      <h3>You're on question ${store.questionNumber} out of 5.</h3>
+      <h3>Current score is ${store.score} points.</h3>`
+  };
+}
 
 function quizStartHTML() {
   console.log('The quizStartHTML function ran.');
@@ -101,27 +115,6 @@ function quizQuestionHTML() {
       <button class='js-submit-answer-button'>Submit answer.</button>
     </form>  
   `
-
-  /*
-  return `
-    <form action="#">
-      <h3 class="js-test-click">Evolution is defined by its action on which level of organization?</h3>
-      
-      <div class="questions-container">
-        <input type="radio" name='evolution' value='mols-genes'>
-         <label for="mols-genes">molecules and genes</label><br>
-        <input type="radio" name='evolution' value='communities'>
-         <label for="communities">communities</label><br>
-        <input type="radio" name='evolution' value='population'>
-         <label for="population">population</label><br>
-        <input type="radio" name='evolution' value='orgs'>
-         <label for="orgs">individual organisms</label><br>
-      </div>
-
-      <button class='js-submit-answer-button'>Submit answer.</button>
-    </form>  
-  `
-  */
 }
 
 function quizCompleteHTML() {
@@ -129,16 +122,26 @@ function quizCompleteHTML() {
   return `<p>Here is a placeholder of the quiz Complete HTML</p>`
 }
 
-function generateFormString() {
-  console.log('Ran generateFormString function.');
+
+function coreContentHTMLaddition() {
+  console.log('Ran coreContentHTMLaddition function.');
   
-  // Want to determine the position in the quiz
+  // initialize empty coreContentString to be filled out
+  let coreContentString = ''
+
+  // Determine the position in the quiz 
   // --> go to correct 1 of 3 form-generating functions:
-  
+
   // Go to the "quiz start" form function:
   if (store.quizStarted === false) {
     console.log('The quiz is starting.');
-    return quizStartHTML();
+    coreContentString = quizStartHTML();
+
+  // Go to "quiz conclusion" form function:
+  } else if (store.quizCompleted === true) {
+    console.log('The quiz has finished, need to provide summary');
+    // will create the appropriate quiz later:
+    coreContentString = 'TBD quiz summary HTML function output.'
   } else {
     console.log('The quiz has already started');
     
@@ -150,6 +153,23 @@ function generateFormString() {
       return quizCompleteHTML();
     };
   };
+
+  return coreContentString;
+
+}
+
+function feedbackHTMLaddition() {
+  console.log('Ran feedbackHTMLaddition function');
+
+  if (store.questionAnswered === false) {
+    console.log('No answered question to provide feedback about.')
+    // No feedback to provide!
+    return `Placeholder feedback spot but will be empty in this situation.`
+  } else {
+    console.log('A question has just been answered and needs feedback.')
+    return `Placeholder feedback.`
+  };
+  
 }
 
 
@@ -160,14 +180,19 @@ function generateFormString() {
 function renderQuizPage() {
   console.log('Ran renderQuizPage function.');
   
-  // Generate the string/HTML content to insert into the DOM
-  let HTMLformAddition = generateFormString();
+  // Generate the string/HTML content for the "Summary"
+  let summaryHTMLstring = summaryHTMLaddition();
+  $('.js-summary').html(summaryHTMLstring);
 
-  // Insert that string/HTML content into the proper place in the DOM
-  $('.js-quiz-page').html(HTMLformAddition);
+  // Generate the string/HTML content for the question + answer choices
+  let questionAndAnswerHTMLstring = coreContentHTMLaddition();
+  $('.js-question-content').html(questionAndAnswerHTMLstring);
+
+  // Generate the string/HTML content for the feedback + button
+  let feedbackHTMLstring = feedbackHTMLaddition();
+  $('.js-feedback-button').html(feedbackHTMLstring);
+
 }
-
-
 
 /********** EVENT HANDLER FUNCTIONS **********/
 
@@ -179,7 +204,7 @@ function renderQuizPage() {
 // ...clicks of the "start quiz" button
 function handleStartQuiz() {
   console.log('Ran handleStartQuiz function.')
-  $('.js-quiz-page',).on('click', '.js-quiz-start', function(event) {
+  $('.js-question-content',).on('click', '.js-quiz-start', function(event) {
     event.preventDefault();
     console.log('You clicked the "start quiz" button');
 
@@ -197,39 +222,46 @@ function handleStartQuiz() {
   });
 }
 
+/* // I think i want to eliminate this function and bring its actions into
+//       --> the place where it's called (increment score if correct)
+//       --> the HTML-generating functions
+
 // ...a correct answer being submitted
 function handleCorrectAnswer() {
   console.log('Ran handleCorrectAnswer function.');
 
   // Need to...
-
   // ...tick up score
+  store.score += 10;
+
   // ...generate a message (and HTML component?) to declare "you answered correctly"
+
   // ...change button to a "next question" button
 
 }
+*/
 
 // ...clicks of the "Submit Answer" button
 function handleAnswerSubmission() {
   console.log('Ran handleAnswerSubmission function.')
   
-  $('.js-quiz-page').on('click', '.js-submit-answer-button', function(event) {
+  $('.js-question-content').on('click', '.js-submit-answer-button', function(event) {
     event.preventDefault();
     console.log('You submitted an answer.');
 
-    // identify the selected answer choice    
-    const answerChoice = $("input[type='radio'][name='evolution']:checked").val();
-    console.log(`You selected "${answerChoice}".`);
-    
+    // Create shorthand for current Question (object in store) 
     const currentQuestion = store.questions[(store.questionNumber-1)];
+    // and Answer (from that Question object)
     const correctAnswer = currentQuestion.correctAnswer;
 
+    // identify the selected answer choice    
+    const answerChoice = $(`input[type='radio'][name='${currentQuestion.questionShorthand}']:checked`).val();
+    console.log(`You selected "${answerChoice}".`);
+  
     // Determine if the answer was correct or not:
     if (answerChoice === correctAnswer) {
       console.log('You chose the correct answer!');
-      // Run the to-be-written "correct answer" function.
-      handleCorrectAnswer();
-
+      store.score += 10;
     } else {
       console.log('You chose the incorrect answer.');
       // Run the to-be-written "incorrect answer" function.

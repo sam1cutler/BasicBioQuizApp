@@ -19,24 +19,27 @@
     
     <main>
     
-      <!-- Need to change this to a "slimmed down", 
-            class-identified section, to be dynamically filled...
-            ... or maybe generate ENTIRE HTML content together? -->
-      <header>
-        <h2>This is where I'll indicate the question # out of 5. (Blank on start, needs class to mark it.)</h2>
-        <h2>And this is where I'll indicate the score so far. (Blank on start, needs class to mark it.)</h2>
-      </header>
+      <!-- Here is where I'll insert the "summary" info (Q# + score) -->
+      <header class="js-summary"></header>
 
       <hr>
 
-      <!-- This is where the start/end quiz forms 
-            AND question forms will be inserted -->
-      <section class='js-quiz-page'></section>
+      <section>
+      
+        <!-- This is where the start/end quiz forms 
+              AND question forms will be inserted -->
+        <div class='js-question-content'></div>
 
+        <hr>
+
+        <!-- Here is where I'll insert the feedback + button -->
+        <div class="js-feedback-button"></div>
+      
+      </section>
+      
       <hr>
 
 <!-- Hard-coded forms, to serve as template... -->
-      <!-- Form A = what is provided at start and end of the quiz -->
       <!--
       <section>
         <div class='major-section'>
