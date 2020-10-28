@@ -125,11 +125,13 @@ function summaryHTMLaddition() {
   
   // if quiz hasn't started OR if it's done, should be empty
   if (store.quizStarted === false || store.quizCompleted === true) {
-    return 'Placeholder summary info but will be empty in this situation.';
+    return '';
   } else {
     return `
-      <h3>You're on question ${store.questionNumber} out of 5.</h3>
-      <h3>Current score is ${store.score} points.</h3>`
+      <header>
+        <h3>You're on question ${store.questionNumber} out of 5.</h3>
+        <h3>Current score is ${store.score} points.</h3>
+      </header>`
   };
 }
 
@@ -230,20 +232,25 @@ function coreContentHTMLaddition() {
 function feedbackHTMLaddition() {
   console.log('Ran feedbackHTMLaddition function');
 
-  if (store.questionAnswered === 'empty') {
+  // Want to hard-code the <div> structure, 
+  // initialize a "insertion" variable
+  // alter return to set value of that "insertion" variable,
+  // return the assembled HTML string.
+
+  if (store.questionAnswered === 'empty' || store.quizCompleted === true) {
     console.log('No answered question to provide feedback about.');
     // No feedback to provide!
-    return `Placeholder feedback spot but will be empty in this situation.`;
+    return ``;
   
   } else if (store.questionAnswered === 'correct') {
     console.log('A question has been answered correctly.');
-    return `That is correct!`;
+    return `<div>That is correct!</div>`;
   
   } else if (store.questionAnswered === 'incorrect') {
     console.log('A question has been answered incorrectly.');
 
     const currentQuestion = store.questions[(store.questionNumber-1)]
-    return `That is incorrect. The correct answer is "${currentQuestion.correctAnswerVerbose}".`;
+    return `<div>That is incorrect. The correct answer is "${currentQuestion.correctAnswerVerbose}"</div>`;
   };
   
 }
@@ -256,6 +263,22 @@ function feedbackHTMLaddition() {
 function renderQuizPage() {
   console.log('Ran renderQuizPage function.');
   
+  // Initialize an empty string of what will be inserted into the <Main> HTML element
+  let HTMLstring = '';
+
+  // Generate the string/HTML content for the "Summary"
+  HTMLstring = summaryHTMLaddition();
+  
+  // Generate the string/HTML content for the question + answer choices
+  HTMLstring += coreContentHTMLaddition();
+
+  // Generate the string/HTML content for the feedback + button
+  HTMLstring += feedbackHTMLaddition();
+  
+  // Insert this string into the <Main> HTML element.
+  $('.js-core-HTML-target').html(HTMLstring);
+
+  /*
   // Generate the string/HTML content for the "Summary"
   let summaryHTMLstring = summaryHTMLaddition();
   $('.js-summary').html(summaryHTMLstring);
@@ -267,6 +290,7 @@ function renderQuizPage() {
   // Generate the string/HTML content for the feedback + button
   let feedbackHTMLstring = feedbackHTMLaddition();
   $('.js-feedback-button').html(feedbackHTMLstring);
+  */
 
 }
 
@@ -280,7 +304,7 @@ function renderQuizPage() {
 // ...clicks of the "start quiz" button
 function handleStartQuiz() {
   console.log('Ran handleStartQuiz function.')
-  $('.js-question-content',).on('click', '.js-quiz-start', function(event) {
+  $('.js-core-HTML-target',).on('click', '.js-quiz-start', function(event) {
     event.preventDefault();
     console.log('You clicked the "start quiz" button');
 
@@ -302,7 +326,7 @@ function handleStartQuiz() {
 function handleAnswerSubmission() {
   console.log('Ran handleAnswerSubmission function.')
   
-  $('.js-question-content').on('click', '.js-submit-answer-button', function(event) {
+  $('.js-core-HTML-target').on('click', '.js-submit-answer-button', function(event) {
     event.preventDefault();
     console.log('You submitted an answer.');
 
@@ -329,13 +353,6 @@ function handleAnswerSubmission() {
       console.log('store.questionAnswered is currently set to '+store.questionAnswered);
     };
 
-    /*
-    if (store.questionNumber === 5) {
-      console.log('The last question on the quiz has been submitted.');
-      store.quizCompleted = true;
-    }
-    */
-
     renderQuizPage();
 
   });
@@ -345,7 +362,7 @@ function handleAnswerSubmission() {
 function handleNextQuestion() {
   console.log('Ran handleNextQuestion function.')
 
-  $('.js-question-content').on('click','.js-next-question-button', function(event) {
+  $('.js-core-HTML-target').on('click','.js-next-question-button', function(event) {
     event.preventDefault;
     console.log("You clicked the 'next question' button.")
 
@@ -365,7 +382,7 @@ function handleNextQuestion() {
 function handleSeeResults() {
   console.log('Ran handleSeeResults function.');
 
-  $('.js-question-content').on('click','.js-see-results-button', function(event) {
+  $('.js-core-HTML-target').on('click','.js-see-results-button', function(event) {
     console.log('You clicked the "see results" button.');
     store.quizCompleted = true;
     renderQuizPage();
@@ -376,7 +393,7 @@ function handleSeeResults() {
 function handleRestartQuiz() {
   console.log('Ran the handleRestartQuiz function.');
 
-  $('.js-question-content').on('click','.js-restart-button', function(event) {
+  $('.js-core-HTML-target').on('click','.js-restart-button', function(event) {
     console.log('You clicked the "restart quiz" button.');
 
     // Reset the important counters/attributes to starting values.
