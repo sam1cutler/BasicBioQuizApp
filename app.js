@@ -1,8 +1,6 @@
+'use strict';
 
-/**
- * Example store structure
- */
-const store = {
+let store = {
   // 5 or more questions are required
   questions: [
     {
@@ -20,7 +18,8 @@ const store = {
         'population',
         'individual-org'
       ],
-      correctAnswer: 'population'
+      correctAnswer: 'population',
+      correctAnswerVerbose: 'population'
     },
     {
       question: 'Which of the following options describes the chemical reaction by which a monomer is attached to a polymer?',
@@ -37,13 +36,68 @@ const store = {
         'redox',
         'dehydration'
       ],
-      correctAnswer: 'dehydration'
+      correctAnswer: 'dehydration',
+      correctAnswerVerbose: 'Dehydration synthesis'
+    },
+    {
+      question: 'Which of the following options accurately represents the “Central Dogma” of biology?',
+      questionShorthand: 'dogma',
+      answers: [
+        'DNA → RNA → protein → physical traits',
+        'physical traits → DNA → RNA → protein',
+        'RNA → DNA → protein → physical traits',
+        'protein → RNA → DNA → physical traits'
+      ],
+      answerVals: [
+        'DNAstart',
+        'traitsStart',
+        'RNAstart',
+        'proteinStart'
+      ],
+      correctAnswer: 'DNAstart',
+      correctAnswerVerbose: 'DNA → RNA → protein → physical traits'
+    },
+    {
+      question: 'A truly scientific hypothesis is “falsifiable”. This means that:',
+      questionShorthand: 'falsifiability',
+      answers: [
+        'The hypothesis is incorrect.',
+        'No evidence could possibly prove the hypothesis is “false”, and thus the hypothesis must be correct.',
+        'It is possible to imagine a situation that would demonstrate the hypothesis is false.',
+        'A large amount of evidence supports the hypothesis being true.'
+      ],
+      answerVals: [
+        'incorrect',
+        'neverFalse',
+        'possible',
+        'lottaEvidence'
+      ],
+      correctAnswer: 'possible',
+      correctAnswerVerbose: 'It is possible to imagine a situation that would demonstrate the hypothesis is false.'
+    },
+    {
+      question: 'Which of the following options is an example of protein secondary structure?',
+      questionShorthand: 'secondaryStructure',
+      answers: [
+        'Sequence of amino acids.',
+        'Overall three-dimensional shape.',
+        'Combination of two or more separate polypeptides.',
+        'Alpha helix.'
+      ],
+      answerVals: [
+        'sequence',
+        '3D',
+        'twoPlus',
+        'alphaHelix'
+      ],
+      correctAnswer: 'alphaHelix',
+      correctAnswerVerbose: 'Alpha helix.'
     }
   ],
   quizStarted: false,
   quizCompleted: false,
   questionNumber: 0,
-  questionAnswered: false,
+  questionAnswered: 'empty',
   score: 0
 };
 
@@ -90,13 +144,13 @@ function quizStartHTML() {
     </div>`;
 }
 
+
 function quizQuestionHTML() {
   console.log('The quizQuestionHTML function ran.');
 
-  let currentQuestion = store.questions[(store.questionNumber-1)]
+  const currentQuestion = store.questions[(store.questionNumber-1)]
   
-  
-  return `
+  let QandAstring = `
     <form action="#">
       <h3 class="js-test-click">${currentQuestion.question}</h3>
       
@@ -111,15 +165,36 @@ function quizQuestionHTML() {
         <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[3]}'>
          <label for="${currentQuestion.answerVals[3]}">${currentQuestion.answers[3]}</label><br>
       </div>
+    `;
 
-      <button class='js-submit-answer-button'>Submit answer.</button>
-    </form>  
-  `
+  let QandAstringFinish = '';
+
+  if (store.questionAnswered === 'empty') {
+    QandAstringFinish = 
+        ` <button class='js-submit-answer-button'>Submit answer.</button>
+          </form>`;
+  } else if (store.questionNumber === 5 && store.questionAnswered != 'empty') {
+    QandAstringFinish = 
+        ` </form>
+          <button class='js-see-results-button'>See quiz results.</button>`; 
+  } else {
+    QandAstringFinish = 
+        `</form>
+         <button class='js-next-question-button'>Next question.</button>`; 
+  };
+
+  QandAstring += QandAstringFinish;
+  return QandAstring;
+  
 }
 
 function quizCompleteHTML() {
   console.log('The quizCompleteHTML function ran.');
-  return `<p>Here is a placeholder of the quiz Complete HTML</p>`
+  return `
+    <h3>Congratulations! You finished the quiz.</h3>
+    <h3>You scored ${store.score} points out of a possible total of 50 points.</h3>
+    <p>You may take this quiz as many times as you like. To restart, please click the button below.</p>
+    <button class='js-restart-button'>Restart quiz.</button>`;
 }
 
 
@@ -141,17 +216,11 @@ function coreContentHTMLaddition() {
   } else if (store.quizCompleted === true) {
     console.log('The quiz has finished, need to provide summary');
     // will create the appropriate quiz later:
-    coreContentString = 'TBD quiz summary HTML function output.'
+    coreContentString = quizCompleteHTML();
+  
   } else {
     console.log('The quiz has already started');
-    
-    // I think need an additional conditional to handle 
-    // whether to give a question form or a "quiz results" form
-    if (store.quizCompleted === false) {
-      return quizQuestionHTML();
-    } else if (quizCompleted === true) {
-      return quizCompleteHTML();
-    };
+    return quizQuestionHTML();
   };
 
   return coreContentString;
@@ -161,13 +230,20 @@ function coreContentHTMLaddition() {
 function feedbackHTMLaddition() {
   console.log('Ran feedbackHTMLaddition function');
 
-  if (store.questionAnswered === false) {
-    console.log('No answered question to provide feedback about.')
+  if (store.questionAnswered === 'empty') {
+    console.log('No answered question to provide feedback about.');
     // No feedback to provide!
-    return `Placeholder feedback spot but will be empty in this situation.`
-  } else {
-    console.log('A question has just been answered and needs feedback.')
-    return `Placeholder feedback.`
+    return `Placeholder feedback spot but will be empty in this situation.`;
+  
+  } else if (store.questionAnswered === 'correct') {
+    console.log('A question has been answered correctly.');
+    return `That is correct!`;
+  
+  } else if (store.questionAnswered === 'incorrect') {
+    console.log('A question has been answered incorrectly.');
+
+    const currentQuestion = store.questions[(store.questionNumber-1)]
+    return `That is incorrect. The correct answer is "${currentQuestion.correctAnswerVerbose}".`;
   };
   
 }
@@ -185,8 +261,8 @@ function renderQuizPage() {
   $('.js-summary').html(summaryHTMLstring);
 
   // Generate the string/HTML content for the question + answer choices
-  let questionAndAnswerHTMLstring = coreContentHTMLaddition();
-  $('.js-question-content').html(questionAndAnswerHTMLstring);
+  let coreContentHTMLstring = coreContentHTMLaddition();
+  $('.js-question-content').html(coreContentHTMLstring);
 
   // Generate the string/HTML content for the feedback + button
   let feedbackHTMLstring = feedbackHTMLaddition();
@@ -222,25 +298,6 @@ function handleStartQuiz() {
   });
 }
 
-/* // I think i want to eliminate this function and bring its actions into
-//       --> the place where it's called (increment score if correct)
-//       --> the HTML-generating functions
-
-// ...a correct answer being submitted
-function handleCorrectAnswer() {
-  console.log('Ran handleCorrectAnswer function.');
-
-  // Need to...
-  // ...tick up score
-  store.score += 10;
-
-  // ...generate a message (and HTML component?) to declare "you answered correctly"
-
-  // ...change button to a "next question" button
-
-}
-*/
-
 // ...clicks of the "Submit Answer" button
 function handleAnswerSubmission() {
   console.log('Ran handleAnswerSubmission function.')
@@ -248,6 +305,8 @@ function handleAnswerSubmission() {
   $('.js-question-content').on('click', '.js-submit-answer-button', function(event) {
     event.preventDefault();
     console.log('You submitted an answer.');
+
+    console.log('store.questionAnswered is currently set to '+store.questionAnswered);
 
     // Create shorthand for current Question (object in store) 
     const currentQuestion = store.questions[(store.questionNumber-1)];
@@ -262,21 +321,76 @@ function handleAnswerSubmission() {
     if (answerChoice === correctAnswer) {
       console.log('You chose the correct answer!');
       store.score += 10;
+      store.questionAnswered = 'correct';
+      console.log('store.questionAnswered is currently set to '+store.questionAnswered);
     } else {
       console.log('You chose the incorrect answer.');
-      // Run the to-be-written "incorrect answer" function.
+      store.questionAnswered = 'incorrect';
+      console.log('store.questionAnswered is currently set to '+store.questionAnswered);
     };
-    
-    //renderQuizPage();
+
+    /*
+    if (store.questionNumber === 5) {
+      console.log('The last question on the quiz has been submitted.');
+      store.quizCompleted = true;
+    }
+    */
+
+    renderQuizPage();
 
   });
 }
 
+// ...clicks of the "Next question" button
+function handleNextQuestion() {
+  console.log('Ran handleNextQuestion function.')
 
+  $('.js-question-content').on('click','.js-next-question-button', function(event) {
+    event.preventDefault;
+    console.log("You clicked the 'next question' button.")
 
-// ...an incorrect answer being submitted
+    // Advance to the next question.
+    store.questionNumber++;
 
-// ...re-starting the quiz
+    // Reset questionAnswered to 'empty'.
+    store.questionAnswered = 'empty';
+
+    // Re-render the DOM. 
+    renderQuizPage();
+
+  })
+}
+
+// ...clicks of the "See results" button
+function handleSeeResults() {
+  console.log('Ran handleSeeResults function.');
+
+  $('.js-question-content').on('click','.js-see-results-button', function(event) {
+    console.log('You clicked the "see results" button.');
+    store.quizCompleted = true;
+    renderQuizPage();
+  })
+}
+
+// ...clicks of the "Restart the quiz" button
+function handleRestartQuiz() {
+  console.log('Ran the handleRestartQuiz function.');
+
+  $('.js-question-content').on('click','.js-restart-button', function(event) {
+    console.log('You clicked the "restart quiz" button.');
+
+    // Reset the important counters/attributes to starting values.
+    store.quizStarted = false;
+    store.quizCompleted = false;
+    store.questionNumber = 0;
+    store.questionAnswered = 'empty';
+    store.score = 0;
+
+    // Re-render the DOM.
+    renderQuizPage();
+    
+  })
+}
 
 
 // run (what's the proper word here?) all the otherhandler functions
@@ -285,7 +399,9 @@ function handleQuizPage() {
   renderQuizPage();
   handleStartQuiz();
   handleAnswerSubmission();
+  handleNextQuestion();
+  handleSeeResults();
+  handleRestartQuiz();
 }
-
 
 $(handleQuizPage);
