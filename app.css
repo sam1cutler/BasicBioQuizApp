@@ -7,6 +7,9 @@
   *
 */
 
+
+/*--- main body styles ---*/
+
 * {
   box-sizing: border-box;
 }
@@ -15,18 +18,18 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
+h1 {
+  margin: 40px;
 }
 
 .major-section {
   border: 2px solid grey;
-  margin: 30px;
+  margin: 20px;
+  padding: 10px 30px 20px 30px;
 }
 
 form {
-  margin: 20px;
+  margin: 20px 20px 5px 20px;
 }
 
 .questions-container {
@@ -43,3 +46,24 @@ form {
   border: 1px solid grey;
   padding: 20px;
 }
+
+
+
+/* Groups & Items */
+/* Note: I have, for now, intentionally chosen to not alter the arrangement of the page
+   for desktop screens, because as structured, I can't think of a change in the layout 
+   between mobile/desktop that I really like. If this is a necessary component for the
+   assignment, I will come up with something to implement in the revision. */ 
+
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.item {
+  flex: 1;
+  /*margin: 10px;*/
+}
+
+/* If I *were* to change the layout 

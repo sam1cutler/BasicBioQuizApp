@@ -101,44 +101,36 @@ let store = {
   score: 0
 };
 
-/**
- * 
- * Technical requirements:
- * 
- * Your app should include a render() function, that regenerates the view each time the store is updated. 
- * See your course material and access support for more details.
- *
- * NO additional HTML elements should be added to the index.html file.
- *
- * You may add attributes (classes, ids, etc) to the existing HTML elements, or link stylesheets or additional scripts if necessary
- *
- * SEE BELOW FOR THE CATEGORIES OF THE TYPES OF FUNCTIONS YOU WILL BE CREATING 👇
- * 
- */
 
 /********** TEMPLATE GENERATION FUNCTIONS **********/
 
 // These functions return HTML templates
 
+// Create the string that will "summarize" quiz progress at the top.
 function summaryHTMLaddition() {
   console.log('Ran summaryHTMLaddition function.');
   
-  // if quiz hasn't started OR if it's done, should be empty
+  // If quiz hasn't started OR if it's done, this should be empty...
   if (store.quizStarted === false || store.quizCompleted === true) {
     return '';
+  
+  // ...otherwise, provide the summary of progress.
   } else {
     return `
-      <header>
-        <h3>You're on question ${store.questionNumber} out of 5.</h3>
-        <h3>Current score is ${store.score} points.</h3>
-      </header>`
+      <section class="major-section item">
+        <header>
+          <h3>You're on question ${store.questionNumber} out of 5.</h3>
+          <h3>Current score is ${store.score} points.</h3>
+        </header>
+      </section>`
   };
 }
 
+// Create the string that will "welcome" users to the start of the quiz.
 function quizStartHTML() {
   console.log('The quizStartHTML function ran.');
   return `
-    <div class='major-section'>
+    <div class='major-section item'>
       <form action="#">
         <h3>Welcome to this quiz, focused on content from the first chapter of our biology textbook.</h3>
         <button class='js-quiz-start'>Start quiz.</button>
@@ -146,68 +138,80 @@ function quizStartHTML() {
     </div>`;
 }
 
-
+// Create the string containing the current question and answer choices. 
 function quizQuestionHTML() {
   console.log('The quizQuestionHTML function ran.');
 
   const currentQuestion = store.questions[(store.questionNumber-1)]
   
+  // Create the string with the question and answer choices, as the start of a form.
   let QandAstring = `
-    <form action="#">
-      <h3 class="js-test-click">${currentQuestion.question}</h3>
-      
-      <div class="questions-container">
-        <!-- I should make a function to create this repetition... -->
-        <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[0]}'>
-         <label for="${currentQuestion.answerVals[0]}">${currentQuestion.answers[0]}</label><br>
-        <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[1]}'>
-         <label for="${currentQuestion.answerVals[1]}">${currentQuestion.answers[1]}</label><br>
-        <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[2]}'>
-         <label for="${currentQuestion.answerVals[2]}">${currentQuestion.answers[2]}</label><br>
-        <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[3]}'>
-         <label for="${currentQuestion.answerVals[3]}">${currentQuestion.answers[3]}</label><br>
-      </div>
+    <section class="major-section item">
+      <form action="#">
+        <h3 class="js-test-click">${currentQuestion.question}</h3>
+        
+        <div class="questions-container">
+          <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[0]}' required>
+          <label for="${currentQuestion.answerVals[0]}">${currentQuestion.answers[0]}</label><br>
+          <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[1]}' required>
+          <label for="${currentQuestion.answerVals[1]}">${currentQuestion.answers[1]}</label><br>
+          <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[2]}' required>
+          <label for="${currentQuestion.answerVals[2]}">${currentQuestion.answers[2]}</label><br>
+          <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[3]}' required>
+          <label for="${currentQuestion.answerVals[3]}">${currentQuestion.answers[3]}</label><br>
+        </div>
     `;
 
+  // A few different ways to end this string...
   let QandAstringFinish = '';
 
+  // ...if the active question hasn't yet been answered, need a "Submit answer" button.
   if (store.questionAnswered === 'empty') {
     QandAstringFinish = 
         ` <button class='js-submit-answer-button'>Submit answer.</button>
-          </form>`;
+          </form>
+          </section>`;
+  
+  // ...if the 5th and thus final question has been answered, need a "See quiz results" button.
   } else if (store.questionNumber === 5 && store.questionAnswered != 'empty') {
     QandAstringFinish = 
         ` </form>
-          <button class='js-see-results-button'>See quiz results.</button>`; 
+          <button class='js-see-results-button'>See quiz results.</button>
+          </section>`; 
+  
+  // ...otherwise, need a "Next question" button. 
   } else {
     QandAstringFinish = 
         `</form>
-         <button class='js-next-question-button'>Next question.</button>`; 
+         <button class='js-next-question-button'>Next question.</button>
+         </section>`; 
   };
 
+  // Append the "finish" to the existing string, and return it. 
   QandAstring += QandAstringFinish;
   return QandAstring;
   
 }
 
+// Create the string containing the "end of quiz" message.
 function quizCompleteHTML() {
   console.log('The quizCompleteHTML function ran.');
   return `
-    <h3>Congratulations! You finished the quiz.</h3>
-    <h3>You scored ${store.score} points out of a possible total of 50 points.</h3>
-    <p>You may take this quiz as many times as you like. To restart, please click the button below.</p>
-    <button class='js-restart-button'>Restart quiz.</button>`;
+    <section class="major-section item">
+      <h3>Congratulations! You finished the quiz.</h3>
+      <h3>You scored ${store.score} points out of a possible total of 50 points.</h3>
+      <p>You may take this quiz as many times as you like. To restart, please click the button below.</p>
+      <button class='js-restart-button'>Restart quiz.</button>
+    </section>`;
 }
 
-
+// Depending on the position in the quiz, will use one of 3 major 
+// "core content" function:
 function coreContentHTMLaddition() {
   console.log('Ran coreContentHTMLaddition function.');
   
   // initialize empty coreContentString to be filled out
   let coreContentString = ''
-
-  // Determine the position in the quiz 
-  // --> go to correct 1 of 3 form-generating functions:
 
   // Go to the "quiz start" form function:
   if (store.quizStarted === false) {
@@ -217,9 +221,9 @@ function coreContentHTMLaddition() {
   // Go to "quiz conclusion" form function:
   } else if (store.quizCompleted === true) {
     console.log('The quiz has finished, need to provide summary');
-    // will create the appropriate quiz later:
     coreContentString = quizCompleteHTML();
   
+  // Go to 
   } else {
     console.log('The quiz has already started');
     return quizQuestionHTML();
@@ -244,13 +248,12 @@ function feedbackHTMLaddition() {
   
   } else if (store.questionAnswered === 'correct') {
     console.log('A question has been answered correctly.');
-    return `<div>That is correct!</div>`;
+    return `<section class="major-section item"><p class="need-space">That is correct!</p></section>`;
   
   } else if (store.questionAnswered === 'incorrect') {
     console.log('A question has been answered incorrectly.');
-
     const currentQuestion = store.questions[(store.questionNumber-1)]
-    return `<div>That is incorrect. The correct answer is "${currentQuestion.correctAnswerVerbose}"</div>`;
+    return `<section class="major-section item"><p class="need-space">That is incorrect. The correct answer is "${currentQuestion.correctAnswerVerbose}"</p></section>`;
   };
   
 }
@@ -277,20 +280,6 @@ function renderQuizPage() {
   
   // Insert this string into the <Main> HTML element.
   $('.js-core-HTML-target').html(HTMLstring);
-
-  /*
-  // Generate the string/HTML content for the "Summary"
-  let summaryHTMLstring = summaryHTMLaddition();
-  $('.js-summary').html(summaryHTMLstring);
-
-  // Generate the string/HTML content for the question + answer choices
-  let coreContentHTMLstring = coreContentHTMLaddition();
-  $('.js-question-content').html(coreContentHTMLstring);
-
-  // Generate the string/HTML content for the feedback + button
-  let feedbackHTMLstring = feedbackHTMLaddition();
-  $('.js-feedback-button').html(feedbackHTMLstring);
-  */
 
 }
 
