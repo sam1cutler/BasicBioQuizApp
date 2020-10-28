@@ -130,39 +130,51 @@ function quizStartHTML() {
   console.log('The quizStartHTML function ran.');
   return `
     <div class='major-section'>
-      <form action="#">
+      <form>
         <h3>Welcome to this quiz, focused on content from the first chapter of our biology textbook.</h3>
         <button class='js-quiz-start'>Start quiz.</button>
       </form>
     </div>`;
 }
 
+// Create a string containing each answer choice
+function makeAnswerChoiceHTMLstring(answerNumber) {
+  console.log('makeAnswerChoiceHTMLstring function.');
+
+  const currentQuestion = store.questions[(store.questionNumber-1)];
+
+  let answerChoiceString = `
+    <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[answerNumber]}' required>
+      <label for="${currentQuestion.answerVals[answerNumber]}">${currentQuestion.answers[answerNumber]}</label><br>`
+  return answerChoiceString;
+
+}
+
 // Create the string containing the current question and answer choices. 
 function quizQuestionHTML() {
   console.log('The quizQuestionHTML function ran.');
 
-  const currentQuestion = store.questions[(store.questionNumber-1)]
+  const currentQuestion = store.questions[(store.questionNumber-1)];
+  console.log('Determined current question.')
   
   // Create the string with the question and answer choices, as the start of a form.
   let QandAstring = `
     <section class="major-section">
       <form>
         <h3 class="js-test-click">${currentQuestion.question}</h3>
-        
-        <div class="questions-container">
-          <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[0]}' required>
-           <label for="${currentQuestion.answerVals[0]}">${currentQuestion.answers[0]}</label><br>
-          <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[1]}' required>
-           <label for="${currentQuestion.answerVals[1]}">${currentQuestion.answers[1]}</label><br>
-          <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[2]}' required>
-           <label for="${currentQuestion.answerVals[2]}">${currentQuestion.answers[2]}</label><br>
-          <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[3]}' required>
-           <label for="${currentQuestion.answerVals[3]}">${currentQuestion.answers[3]}</label><br>
-        </div>
-    `;
+        <div class="answer-choices-container">`;
+  console.log('Started the QandAstring.')
 
-  // A few different ways to end this string...
-  let QandAstringFinish = '';
+  // Add each answer choice
+  let i = '';
+  for (i=0; i<4; i++) {
+    //console.log(i);
+    let answerChoiceAddition = makeAnswerChoiceHTMLstring(i);
+    QandAstring += answerChoiceAddition;
+  };
+
+  // A few different ways to end this string (always includes ending the answer-choices <div>)...
+  let QandAstringFinish = '</div>';
 
   // ...if the active question hasn't yet been answered, need a "Submit answer" button.
   if (store.questionAnswered === 'empty') {
