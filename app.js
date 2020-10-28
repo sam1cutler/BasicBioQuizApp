@@ -1,7 +1,7 @@
 'use strict';
 
 let store = {
-  // 5 or more questions are required
+  
   questions: [
     {
       question: 'Evolution is defined by its action on which level of organization?',
@@ -103,7 +103,6 @@ let store = {
 
 
 /********** TEMPLATE GENERATION FUNCTIONS **********/
-
 // These functions return HTML templates
 
 // Create the string that will "summarize" quiz progress at the top.
@@ -117,7 +116,7 @@ function summaryHTMLaddition() {
   // ...otherwise, provide the summary of progress.
   } else {
     return `
-      <section class="major-section item">
+      <section class="major-section">
         <header>
           <h3>You're on question ${store.questionNumber} out of 5.</h3>
           <h3>Current score is ${store.score} points.</h3>
@@ -130,7 +129,7 @@ function summaryHTMLaddition() {
 function quizStartHTML() {
   console.log('The quizStartHTML function ran.');
   return `
-    <div class='major-section item'>
+    <div class='major-section'>
       <form action="#">
         <h3>Welcome to this quiz, focused on content from the first chapter of our biology textbook.</h3>
         <button class='js-quiz-start'>Start quiz.</button>
@@ -146,19 +145,19 @@ function quizQuestionHTML() {
   
   // Create the string with the question and answer choices, as the start of a form.
   let QandAstring = `
-    <section class="major-section item">
-      <form action="#">
+    <section class="major-section">
+      <form>
         <h3 class="js-test-click">${currentQuestion.question}</h3>
         
         <div class="questions-container">
           <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[0]}' required>
-          <label for="${currentQuestion.answerVals[0]}">${currentQuestion.answers[0]}</label><br>
+           <label for="${currentQuestion.answerVals[0]}">${currentQuestion.answers[0]}</label><br>
           <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[1]}' required>
-          <label for="${currentQuestion.answerVals[1]}">${currentQuestion.answers[1]}</label><br>
+           <label for="${currentQuestion.answerVals[1]}">${currentQuestion.answers[1]}</label><br>
           <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[2]}' required>
-          <label for="${currentQuestion.answerVals[2]}">${currentQuestion.answers[2]}</label><br>
+           <label for="${currentQuestion.answerVals[2]}">${currentQuestion.answers[2]}</label><br>
           <input type="radio" name='${currentQuestion.questionShorthand}' value='${currentQuestion.answerVals[3]}' required>
-          <label for="${currentQuestion.answerVals[3]}">${currentQuestion.answers[3]}</label><br>
+           <label for="${currentQuestion.answerVals[3]}">${currentQuestion.answers[3]}</label><br>
         </div>
     `;
 
@@ -172,7 +171,7 @@ function quizQuestionHTML() {
           </form>
           </section>`;
   
-  // ...if the 5th and thus final question has been answered, need a "See quiz results" button.
+  // ...if the 5th, and thus final, question has been answered, need a "See quiz results" button.
   } else if (store.questionNumber === 5 && store.questionAnswered != 'empty') {
     QandAstringFinish = 
         ` </form>
@@ -197,7 +196,7 @@ function quizQuestionHTML() {
 function quizCompleteHTML() {
   console.log('The quizCompleteHTML function ran.');
   return `
-    <section class="major-section item">
+    <section class="major-section">
       <h3>Congratulations! You finished the quiz.</h3>
       <h3>You scored ${store.score} points out of a possible total of 50 points.</h3>
       <p>You may take this quiz as many times as you like. To restart, please click the button below.</p>
@@ -206,7 +205,7 @@ function quizCompleteHTML() {
 }
 
 // Depending on the position in the quiz, will use one of 3 major 
-// "core content" function:
+// "core content" functions:
 function coreContentHTMLaddition() {
   console.log('Ran coreContentHTMLaddition function.');
   
@@ -223,7 +222,7 @@ function coreContentHTMLaddition() {
     console.log('The quiz has finished, need to provide summary');
     coreContentString = quizCompleteHTML();
   
-  // Go to 
+  // Otherwise, go to the "quiz question" form function:
   } else {
     console.log('The quiz has already started');
     return quizQuestionHTML();
@@ -233,27 +232,25 @@ function coreContentHTMLaddition() {
 
 }
 
+// Want to provide right/wrong feedback after answers are submitted.
 function feedbackHTMLaddition() {
   console.log('Ran feedbackHTMLaddition function');
 
-  // Want to hard-code the <div> structure, 
-  // initialize a "insertion" variable
-  // alter return to set value of that "insertion" variable,
-  // return the assembled HTML string.
-
+  // No feedback to provide if answer has not just been answered:
   if (store.questionAnswered === 'empty' || store.quizCompleted === true) {
     console.log('No answered question to provide feedback about.');
-    // No feedback to provide!
     return ``;
-  
+
+  // Feedback for a correct answer:
   } else if (store.questionAnswered === 'correct') {
     console.log('A question has been answered correctly.');
-    return `<section class="major-section item"><p class="need-space">That is correct!</p></section>`;
+    return `<section class="major-section"><p class="need-space">That is correct!</p></section>`;
   
+  // Feedback for an incorrect answer, including the correct answer:
   } else if (store.questionAnswered === 'incorrect') {
     console.log('A question has been answered incorrectly.');
     const currentQuestion = store.questions[(store.questionNumber-1)]
-    return `<section class="major-section item"><p class="need-space">That is incorrect. The correct answer is "${currentQuestion.correctAnswerVerbose}"</p></section>`;
+    return `<section class="major-section"><p class="need-space">That is incorrect. The correct answer is "${currentQuestion.correctAnswerVerbose}"</p></section>`;
   };
   
 }
@@ -287,7 +284,6 @@ function renderQuizPage() {
 
 // These functions handle events (submit, click, etc)
 
-// Thinking about "user stories" to sketch out the render functions that I'll need...
 // This page will need to handle...
 
 // ...clicks of the "start quiz" button
@@ -399,7 +395,7 @@ function handleRestartQuiz() {
 }
 
 
-// run (what's the proper word here?) all the otherhandler functions
+// Render the page for the first time and run all the handler functions.
 function handleQuizPage() {
   console.log('Ran handleQuizPage function.');
   renderQuizPage();

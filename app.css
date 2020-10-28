@@ -23,47 +23,44 @@ h1 {
 }
 
 .major-section {
-  border: 2px solid grey;
-  margin: 20px;
-  padding: 10px 30px 20px 30px;
+  border: 1px solid grey;
+  margin: 10px;
+  padding: 5px 15px 10px 15px;
 }
 
 form {
-  margin: 20px 20px 5px 20px;
+  margin: 10px 10px 5px 10px;
 }
 
 .questions-container {
-  margin: 20px;
+  margin: 10px;
 }
 
-.question-list {
-  list-style: none;
-  padding-left: 0;
-}
-
-.question-list > li {
-  margin-bottom: 20px;
-  border: 1px solid grey;
-  padding: 20px;
+header h3 {
+  text-align: center;
 }
 
 
+/*--- override base styles for screens >700px --*/
 
-/* Groups & Items */
-/* Note: I have, for now, intentionally chosen to not alter the arrangement of the page
-   for desktop screens, because as structured, I can't think of a change in the layout 
-   between mobile/desktop that I really like. If this is a necessary component for the
-   assignment, I will come up with something to implement in the revision. */ 
+@media (min-width: 700px) {
+  body {
+    width: 90%;
+    margin: 0 auto;
+  }
 
-.group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  .major-section {
+    border: 1px solid grey;
+    margin: 20px;
+    padding: 10px 30px 20px 30px;
+  }
+  
+  form {
+    margin: 20px 20px 5px 20px;
+  }
+  
+  .questions-container {
+    margin: 20px;
+  }
 }
 
-.item {
-  flex: 1;
-  /*margin: 10px;*/
-}
-
-/* If I *were* to change the layout 
